@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulaire de notation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f0f2f5;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header-card {
+            background: white;
+            padding: 30px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .header-card h1 {
+            font-size: 24px;
+            color: #1c1e21;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .header-card p {
+            color: #65676b;
+            font-size: 15px;
+        }
+
+        .email-card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .email-label {
+            font-size: 15px;
+            color: #1c1e21;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .required {
+            color: #f8e71c;
+            font-weight: 700;
+        }
+
+        #email-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e4e6eb;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        #email-input:focus {
+            border-color: #01afd1;
+        }
+
+        #email-input.error {
+            border-color: #f8e71c;
+        }
+
+        .quota-card {
+            background: linear-gradient(135deg, #01afd1 0%, #0199b8 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(1,175,209,0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .quota-text {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .quota-count {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .post-card {
+            background: white;
+            margin-bottom: 16px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .post-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .post-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e4e6eb;
+        }
+
+        .post-title {
+            font-size: 16px;
+            color: #1c1e21;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: #01afd1;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .toggle-btn:hover {
+            opacity: 0.7;
+        }
+
+        .description {
+            margin-top: 12px;
+            padding: 12px;
+            background: #f7f8fa;
+            border-radius: 8px;
+            color: #65676b;
+            font-size: 14px;
+            display: none;
+            border-left: 3px solid #01afd1;
+        }
+
+        .description.visible {
+            display: block;
+        }
+
+        .post-content {
+            padding: 20px;
+        }
+
+        .rating-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .stars {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .star {
+            font-size: 32px;
+            cursor: pointer;
+            color: #e4e6eb;
+            transition: all 0.15s ease;
+            user-select: none;
+        }
+
+        .star:hover {
+            transform: scale(1.15);
+        }
+
+        .star.active {
+            color: #f8e71c;
+        }
+
+        .star.disabled {
+            cursor: not-allowed;
+            opacity: 0.3;
+        }
+
+        .reset-btn {
+            padding: 8px 16px;
+            background: #f0f2f5;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #65676b;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover:not(:disabled) {
+            background: #e4e6eb;
+        }
+
+        .reset-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .warning-message {
+            color: #1c1e21;
+            background: #fff9e6;
+            border: 2px solid #f8e71c;
+            font-size: 13px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            display: none;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
+        .warning-message.visible {
+            display: block;
+        }
+
+        .submit-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .submit-btn {
+            padding: 14px 40px;
+            background: linear-gradient(135deg, #01afd1 0%, #0199b8 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 6px rgba(1,175,209,0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(1,175,209,0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .thank-you-page {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .thank-you-page.visible {
+            display: block;
+        }
+
+        .thank-you-card {
+            background: white;
+            padding: 60px 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .thank-you-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        .thank-you-title {
+            font-size: 32px;
+            color: #1c1e21;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .thank-you-message {
+            font-size: 16px;
+            color: #65676b;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .thank-you-highlight {
+            background: linear-gradient(135deg, #01afd1 0%, #0199b8 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .thank-you-highlight strong {
+            color: #f8e71c;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header-card, .email-card, .post-card, .submit-card, .quota-card {
+                border-radius: 8px;
+            }
+
+            .header-card h1 {
+                font-size: 20px;
+            }
+
+            .star {
+                font-size: 28px;
+            }
+
+            .thank-you-card {
+                padding: 40px 20px;
+            }
+
+            .thank-you-icon {
+                font-size: 60px;
+            }
+
+            .thank-you-title {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="form-container">
+        <div class="header-card">
+            <h1>🎯 Sondage des idées</h1>
+            <p>
+			<h3>Merci d’avoir participé à la collecte d’idées !</h3>
+
+			Nous t'invitons maintenant à sélectionner <strong>jusqu’à 5 idées</strong> parmi celles proposées plus bas, en indiquant ton niveau d’intérêt pour chacune : </br>
+			- <strong>1</strong> : Peu intéressé(e) <br/>
+			- <strong>5</strong> : Très intéressé(e) </br>
+
+			<h3>Consignes :</h3>
+			- Vous ne pouvez voter que pour </strong>5 idées maximum</strong>.
+			- Attribuez une note de </strong>1 à 5</strong> à chaque idée choisie.
+			- Votre avis nous aidera à prioriser le projet à développer.
+
+			Merci pour ta participation !
+			</p>
+        </div>
+
+        <div class="email-card">
+            <div class="email-label">
+                <span>📧 Votre adresse e-mail</span>
+                <span class="required">*</span>
+            </div>
+            <input type="email" id="email-input" placeholder="votre.email@exemple.com">
+            <div class="warning-message" id="email-warning">
+                ⚠️ Veuillez entrer une adresse e-mail valide
+            </div>
+        </div>
+
+        <div class="quota-card">
+            <span class="quota-text">Idées notées</span>
+            <span class="quota-count"><span id="voted-count">0</span> / 5</span>
+        </div>
+
+        <div id="questions-container"></div>
+
+        <div class="submit-card">
+            <button class="submit-btn" id="submit-btn">Envoyer mes évaluations</button>
+        </div>
+    </div>
+
+    <div class="thank-you-page" id="thank-you-page">
+        <div class="thank-you-card">
+            <div class="thank-you-icon">🎉</div>
+            <h1 class="thank-you-title">Merci pour votre participation !</h1>
+            <p class="thank-you-message">
+                Vos évaluations ont été envoyées avec succès. 
+                Nous apprécions vraiment le temps que vous avez pris pour partager votre avis.
+            </p>
+            <div class="thank-you-highlight">
+                Vos <strong>5 évaluations</strong> nous aideront à améliorer nos services
+            </div>
+            <p class="thank-you-message">
+                Vous recevrez une confirmation par e-mail sous peu.
+            </p>
+        </div>
+    </div>
+
+    <script>
+const questions =  [
+{
+id: 1,
+title: "CUI-SI-TECH",
+description: "C'est un service innovant d'économie circulaire visant à réduire le gaspillage d'appareils électroménagers."
+},
+{
+id: 2,
+title: "Magasin Intelligent (1984)",
+description: "Un système d'IA qui suive les mouvements des acheteurs dans le magasin pour déterminer leur besoins et intérêts collectifs. Il peut changer des prises et créer des promotions d'une manière autonome pour maximiser les profits."
+},
+{
+id: 3,
+title: "Cuisine quotidienne",
+description: "Création d'un site web sur lequel chaque personne peut écrire ses buts concernant son alimentation. Le site est capable grâce à des spécialistes et l'IA de préparer un plan d'alimentation journalier. Puis après inscription, le prestataire livre chaque jour les plats."
+},
+{
+id: 4,
+title: "Station de tri mobile et intelligente",
+description: "La carrosserie construit une station de tri roulante et dans le domaine informatique ils vont faire un système avec des capteurs. Quand on met quelque chose dans le mauvais bac la machine automatiquement le met dans le bon endroit."
+},
+{
+id: 5,
+title: "Gaspillage alimentaire \[Le coin Anti-Gasp\]",
+description: "Faire créer une mini-application (ou site) pour les élèves et apprentis de l'école. Le principe : permettre à chacun de poster les aliments qu'il n'utilisera pas (exemple : j'ai une banane en trop, je ne mange pas mon sandwich, j'offre un yaourt qui expire demain). Les autres peuvent voir l'annonce et récupérer l'aliment gratuitement pendant la pause. Nom de l'application : Anti-Gaspillage de l'École."
+},
+{
+id: 6,
+title: "Foodcycle",
+description: "Dans un restaurant/boulangerie, etc... il y a toujours des produits périssables, invendus. Au lieu qu'ils soient jetés, les entreprises baissent de manière conséquente les prix, si il reste des invendus après cette action, alors ils devraient les offrir à des associations caritatives."
+},
+{
+id: 7,
+title: "La plateforme",
+description: "Réutiliser les pièces automobiles : 1. Collecter 2. Reconditionner 3. Réparer 4. Vérifier et classer 5. Vendre en ligne."
+},
+{
+id: 8,
+title: "Save & Eat",
+description: "L'application anti-gaspillage permet de signaler en temps réel les repas encore disponibles et les restes non consommés. Les utilisateurs peuvent réserver leurs portions à l'avance ou récupérer les surplus pour les donner à des associations pour qu'ils puissent les distribuer à des personnes dans le besoin."
+},
+{
+id: 9,
+title: "Famine",
+description: "Créer des stands gratuits dans les villes/villages qui partagent le nécessaire (pâtes/riz/lait, etc.)"
+},
+{
+id: 10,
+title: "Réduction d'impôts à la consommation de déchets annuels",
+description: "Cette proposition vise à réduire significativement la production de déchets en instaurant une fiscalité plus juste et plus responsable. Le principe est simple : les impôts annuels liés à la gestion des déchets seraient calculés en fonction du poids réel des déchets produits par chaque logement, divisé par le nombre de résidents. En établissant une consommation moyenne écologique par individu, chaque foyer serait encouragé à adopter des comportements plus durables. Si la production de déchets dépasse cette moyenne, une hausse d'impôts proportionnelle serait appliquée. À l'inverse, les foyers qui produisent moins que la moyenne bénéficierait d'une réduction fiscale. Ce système crée une dynamique vertueuse : chacun devient acteur de la réduction des déchets, les efforts individuels sont récompensés, et la charge financière repose davantage sur ceux qui consomment et jettent le plus. Une manière efficace d'encourager la sobriété, de valoriser les bons comportements, et d'accélérer la transition vers un mode de vie plus écologique."
+},
+{
+id: 11,
+title: "Nexus -- Organisation Mondiale pour l'Harmonie Planétaire",
+description: "Le fonctionnement repose sur un principe simple : chaque pays, entreprise et citoyen contribue à la protection de la Terre selon ses capacités, tandis que l'organisation apporte des outils, des ressources et un soutien stratégique. Nexus développe notamment : \n• un système mondial d'alertes écologiques et climatiques, \n• des initiatives de reforestation massive et de restauration des écosystèmes \n• des programmes d'éducation environnementale, • des mécanismes d'incitation pour réduire la consommation de ressources et les émissions \n• une coordination internationale pour accélérer l'innovation durable. Nexus crée ainsi une dynamique collective : chacun devient acteur de la préservation de la planète, les efforts sont valorisés, et la transition écologique devient une mission commune. Une manière concrète et ambitieuse d'agir ensemble pour la survie et l'harmonie de notre monde."
+},
+{
+id: 12,
+title: "Échanger la dette contre la protection de l'environnement",
+description: "Un pays riche, la banque mondiale ou autre paie une partie de la dette d'un pays en développement en échange d'engagements écologiques (protection de forêts, réduction des émissions, reforestation, etc.). C'est un accord gagnant-gagnant. Le pays endetté respire financièrement et l'environnement est mieux protégé."
+},
+{
+id: 13,
+title: "Banque mondiale de la nature",
+description: "Chaque pays serait obligé de rembourser à la planète ce qu'il détruit. Par exemple, pour chaque forêt coupée, il faudrait en replanter deux ailleurs. Pour chaque tonne de pollution produite, il faudrait financer la dépollution des océans, de l'air ou des sols. Cette \"banque de la nature\" servirait uniquement à réparer la Terre."
+},
+{
+id: 14,
+title: "Le bracelet intelligent pour réduire son empreinte écologique",
+description: "coTrack est un bracelet connecté qui analyse automatiquement les habitudes quotidiennes d'un individu (déplacements, consommation énergétique approximative, hydratation, tri des déchets) afin de lui fournir des recommandations personnalisées pour réduire son impact environnemental. Grâce à une application mobile intuitive, l'utilisateur visualise ses progrès, reçoit des défis écologiques et peut comparer son score avec celui de sa communauté, favorisant ainsi un engagement durable et ludique."
+},
+{
+id: 15,
+title: "Surveillance et recyclage des déchets",
+description: "Nous pourrions surveiller les rues, les bords de plage, ... pour faire en sorte que personne ne puisse jeter ses déchets par terre. Si quelqu'un est pris sur le fait, il sera puni de manière à ce qu'il ne refasse plus la même erreur. De plus, nous pourrions essayer de mieux recycler les déchets et de créer davantage de matériaux recyclables."
+},
+{
+id: 16,
+title: "AQUAMORPH",
+description: "Modifié génétiquement les bactéries qui se nourrit de plastic pour qu'ils soient capables de vivres dans des environnements froids et qu'ils puissent se nourrir de n'importe quel type de plastic (polyéthylène, polypropylène, polystyrène, etc...)."
+},
+{
+id: 17,
+title: "Énergie+",
+description: "Créer un système qui motive les gens à consommer moins d'électricité. Quand quelqu'un réduit sa consommation, il gagne des points. Ces points donnent droit à de petits avantages ou rabais dans les commerces locaux."
+},
+{
+id: 18,
+title: "Save & Earn",
+description: "Une application qui récompense financièrement les bonnes actions environnementales et sociales. L'utilisateur se filme en faisant une bonne action. L'objectif est même de permettre aux meilleurs utilisateurs d'en vivre. Chaque utilisateur sera manuellement approuvé à la monétisation. Chaque utilisateur doit montrer de l'engagement en likant, partageant les vidéos, sinon les comptes ne seront pas rémunérés. Le but à long terme est de crée des profils écologiques nationaux (hors contexte de l'application), attribuant des notes, et favorisant les citoyens qui respectent écologiquement leurs pays. Une entreprise sera par exemple soulagée de frais si elle contient un certain nombre d'employés écologiques, ce qui donc donnera aussi un avantage à l'embauche. Cette note se basera sur l'impact Carbonne de chaque citoyen. Le but est de le rendre tellement attractif que d'autres pays accepteront."
+},
+{
+id: 19,
+title: "Grill Motrice",
+description: "Récupérer une voiture qui serait transformée en cuisine avec une plaque électrique qui peut être présente à des événements caritatifs ou pour aider des associations dans le besoin. Les informaticiens s'occuperaient de créer des programmes facilitant la cuisine, le commerce servirait à promouvoir le projet et entrer en contact avec les associations ou des événements."
+},
+{
+id: 20,
+title: "ÉcoGoutte ou HydroSmart Filter",
+description: "Machine qui filtre l'eau des lave-linges ou lave-vaisselles pour la réutiliser pour d'autres nettoyages ou une autre utilisation au lieu qu'elle soit gaspillée."
+},
+{
+id: 21,
+title: "Circulation d'avions",
+description: "Réduire le nombre de vols et si possible passer à des avions électriques."
+},
+{
+id: 22,
+title: "Fausse nourriture",
+description: "Il y a de plus en plus de fausse alimentation. Cela influence le commerce car il car on continue de les vendre. La plupart des personnes qui cuisinent ne savent pas ce qu'elles cuisinent et ce qu'elles donnent aux clients. La solution est de créer un logiciel qui permettrait d'analyser ce qu'on consomme. Les nouvelles plateformes d'achat de vêtement font augmenter la consommation de vêtements parce que ce n'est pas cher et pas de bonne qualité donc les vêtements se déchirent rapidement demandant un rachat. L'idée est de mettre en place un système permettant de vérifier l'achat de chaque citoyen. Si un citoyen dépasse la limite d'achat lui étant autorisé, une sanction tombe (=amende). Le but étant de diminuer la surconsommation de manière drastique."
+},
+{
+id: 23,
+title: "Refuge pour sans abris où on apprend",
+description: "Faire des refuges qui marchent en autonomie où les sans abris peuvent travailler et apprendre des compétences (informatiques, cuisine, etc.)."
+},
+{
+id: 24,
+title: "Sensibilisation sur un pays en guerre",
+description: "Sensibiliser les jeunes sur des pays en guerre mais sur des conflits qui ne sont pas connu du grand public."
+},
+{
+id: 25,
+title: "IA",
+description: "L'IA consomme la plupart des métiers, il nous rend plus incompétent et même inutile. Notre solution pour y remédier serait limiter l'usage de l'AI ou même interdire son utilisation car de jour en jour toutes les compétences acquises deviennent inexistant à notre service."
+},
+{
+id: 26,
+title: "Se déplacer pour manger",
+description: "Envoyer de la nourriture dans les pays en besoin via des transports écologiques."
+},
+{
+id: 27,
+title: "Pauvreté",
+description: "Sensibiliser les riches au partage ou envisager une répartition équitable."
+},
+{
+id: 28,
+title: "Déodorant naturel",
+description: "Pour faire face à la surconsommation de cosmétique et produits de beauté, nous avons pensé à un déodorant naturel avec des ingrédients Bio."
+},
+{
+id: 29,
+title: "Commande de nourriture fraiche",
+description: "Nous voulons, par exemple, un croissant et que ce croissant soit directement livré chez le demandeur par un livreur en vélo électrique afin de limiter la pollution des emballages."
+},
+{
+id: 30,
+title: "Plateforme d'enseignement internationale en ligne",
+description: "Nous avons pensé à une idée qui est une plateforme d'enseignement dans tous les pays du monde gratuite dont les écoles du monde auront les mêmes formations avec tout les thèmes inclus."
+},
+{
+id: 31,
+title: "Arrêter les phares de jours",
+description: "Arrêter de mettre les phares dans la journée."
+},
+{
+id: 32,
+title: "Créer des cigarettes réutilisables",
+description: "On crée des cigarettes réutilisables pour réduire les mégots. On ne jette pas et on rachète moins. Du coup, beaucoup moins de pollution."
+}
+];
+
+        let ratings = {};
+        let votedCount = 0;
+        const MAX_VOTES = 5;
+
+        function initQuestions() {
+            const container = document.getElementById('questions-container');
+            
+            questions.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'post-card';
+                card.innerHTML = `
+                    <div class="post-header">
+                        <div class="post-title">${q.title}</div>
+                        <button class="toggle-btn" onclick="toggleDescription(${q.id})">
+                            Voir la description
+                        </button>
+                        <div class="description" id="desc-${q.id}">${q.description}</div>
+                    </div>
+                    <div class="post-content">
+                        <div class="rating-container">
+                            <div class="stars" id="stars-${q.id}">
+                                ${[1,2,3,4,5].map(i => `<span class="star" data-question="${q.id}" data-value="${i}">★</span>`).join('')}
+                            </div>
+                            <button class="reset-btn" id="reset-${q.id}" onclick="resetRating(${q.id})" disabled>
+                                Réinitialiser
+                            </button>
+                        </div>
+                        <div class="warning-message" id="warning-${q.id}">
+                            ⚠️ Quota atteint. Réinitialisez une notation pour continuer.
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            document.querySelectorAll('.star').forEach(star => {
+                star.addEventListener('click', handleStarClick);
+                star.addEventListener('mouseenter', handleStarHover);
+            });
+
+            document.querySelectorAll('.stars').forEach(starsContainer => {
+                starsContainer.addEventListener('mouseleave', handleMouseLeave);
+            });
+        }
+
+        function toggleDescription(id) {
+            const desc = document.getElementById(`desc-${id}`);
+            const btn = event.target;
+            
+            if (desc.classList.contains('visible')) {
+                desc.classList.remove('visible');
+                btn.textContent = 'Voir la description';
+            } else {
+                desc.classList.add('visible');
+                btn.textContent = 'Masquer la description';
+            }
+        }
+
+        function handleStarClick(e) {
+            const questionId = parseInt(e.target.dataset.question);
+            const value = parseInt(e.target.dataset.value);
+            
+            const isCurrentlyRated = ratings[questionId] !== undefined;
+            
+            if (!isCurrentlyRated && votedCount >= MAX_VOTES) {
+                const warning = document.getElementById(`warning-${questionId}`);
+                warning.classList.add('visible');
+                setTimeout(() => warning.classList.remove('visible'), 3000);
+                return;
+            }
+
+            if (!isCurrentlyRated) {
+                votedCount++;
+            }
+            
+            ratings[questionId] = value;
+            updateStars(questionId, value);
+            updateResetButton(questionId, true);
+            updateVotedCount();
+            updateAllStarsState();
+        }
+
+        function handleStarHover(e) {
+            const questionId = parseInt(e.target.dataset.question);
+            const value = parseInt(e.target.dataset.value);
+            const isRated = ratings[questionId] !== undefined;
+            const canVote = isRated || votedCount < MAX_VOTES;
+            
+            if (canVote) {
+                const stars = document.querySelectorAll(`#stars-${questionId} .star`);
+                stars.forEach((star, index) => {
+                    if (index < value) {
+                        star.style.color = '#f8e71c';
+                    } else {
+                        star.style.color = '#e4e6eb';
+                    }
+                });
+            }
+        }
+
+        function handleMouseLeave(e) {
+            const questionId = parseInt(e.currentTarget.id.split('-')[1]);
+            const currentRating = ratings[questionId];
+            
+            if (currentRating) {
+                updateStars(questionId, currentRating);
+            } else {
+                const stars = document.querySelectorAll(`#stars-${questionId} .star`);
+                stars.forEach(star => {
+                    star.style.color = '#e4e6eb';
+                });
+            }
+        }
+
+        function updateStars(questionId, value) {
+            const stars = document.querySelectorAll(`#stars-${questionId} .star`);
+            stars.forEach((star, index) => {
+                if (index < value) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        function updateResetButton(questionId, enable) {
+            const resetBtn = document.getElementById(`reset-${questionId}`);
+            resetBtn.disabled = !enable;
+        }
+
+        function resetRating(questionId) {
+            if (ratings[questionId] !== undefined) {
+                delete ratings[questionId];
+                votedCount--;
+                
+                const stars = document.querySelectorAll(`#stars-${questionId} .star`);
+                stars.forEach(star => star.classList.remove('active'));
+                
+                updateResetButton(questionId, false);
+                updateVotedCount();
+                updateAllStarsState();
+            }
+        }
+
+        function updateVotedCount() {
+            document.getElementById('voted-count').textContent = votedCount;
+        }
+
+        function updateAllStarsState() {
+            questions.forEach(q => {
+                const stars = document.querySelectorAll(`#stars-${q.id} .star`);
+                const isRated = ratings[q.id] !== undefined;
+                const canVote = isRated || votedCount < MAX_VOTES;
+                
+                stars.forEach(star => {
+                    if (canVote) {
+                        star.classList.remove('disabled');
+                        star.style.cursor = 'pointer';
+                    } else {
+                        star.classList.add('disabled');
+                        star.style.cursor = 'not-allowed';
+                    }
+                });
+            });
+        }
+
+        document.getElementById('submit-btn').addEventListener('click', async () => {
+            const email = document.getElementById('email-input').value.trim();
+            const emailWarning = document.getElementById('email-warning');
+            const emailInput = document.getElementById('email-input');
+            
+            // Validation de l'email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email || !emailRegex.test(email)) {
+                emailWarning.classList.add('visible');
+                emailInput.classList.add('error');
+                emailInput.focus();
+                return;
+            } else {
+                emailWarning.classList.remove('visible');
+                emailInput.classList.remove('error');
+            }
+
+            // Vérification du quota
+            if (votedCount !== MAX_VOTES) {
+                alert(`Veuillez noter exactement ${MAX_VOTES} idées. Vous en avez noté ${votedCount}.`);
+                return;
+            }
+
+            // Préparation des données au format demandé
+            const sortedRatings = Object.entries(ratings)
+                .sort(([idA], [idB]) => parseInt(idA) - parseInt(idB));
+            
+            const formData = { email: email };
+            
+            sortedRatings.forEach(([id, rating], index) => {
+                const question = questions.find(q => q.id === parseInt(id));
+                const ideaNum = index + 1;
+                formData[`idea${ideaNum}_name`] = question.title;
+                formData[`idea${ideaNum}_point`] = rating;
+            });
+
+            console.log('Données envoyées:', formData);
+
+            // Envoi de la requête POST
+            try {
+				const response = await fetch('https://script.google.com/macros/s/AKfycbydbhYVxhGR7wBRBhyz-5ZA5qo7vHnxN84LhqAqpO5tbkkBI3rsXqwJDOjiUJdDg3donQ/exec', {
+                    method: 'POST',
+					mode: "no-cors",
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Réponse du serveur:', result);
+                    
+                    // Afficher la page de remerciement
+                    document.getElementById('form-container').style.display = 'none';
+                    document.getElementById('thank-you-page').classList.add('visible');
+                    
+                    // Scroll vers le haut
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+				window.location.href = 'merci.html'; 
+            } catch (error) {
+				window.location.href = 'merci.html'; 
+            }
+        });
+
+        initQuestions();
+    </script>
+</body>
+</html>
